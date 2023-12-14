@@ -27,7 +27,7 @@ export const AppThemeProvider: React.FC<IThemeContextProps> = ({ children }) => 
         return DarkTheme;
     }, [themeName]);
     return (
-        <ThemeContext.Provider value={useMemo(() => ({ themeName, toggleTheme }), [themeName, toggleTheme])}>
+        <ThemeContext.Provider value={{ themeName, toggleTheme }}>
             <ThemeProvider theme={theme}>
                 <Box width='100vw' height='100vh' bgcolor={theme.palette.background.default}>
                     {children}
