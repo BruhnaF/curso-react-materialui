@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Icon, Paper, Skeleton, useTheme } from '@mui/material';
+import { Box, Button, Divider, Icon, Paper, Skeleton, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 interface IFerramentasDeDetalheProp {
     textoBotaoNovo?: string;
@@ -35,7 +35,11 @@ export const CustomBtn: React.FC<ICustomBtnProps> = ({ icone, label, variante, o
             variant={variante}
             startIcon={<Icon>{icone}</Icon>}
             onClick={onClick}
-        >{label}</Button>
+        >
+            <Typography variant='button' whiteSpace='nowrap' textOverflow='ellipsis' overflow='hidden'>
+                {label}
+            </Typography>
+        </Button>
     );
 };
 
@@ -60,6 +64,8 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProp> = ({
     aoClicarEmSalvarEFechar,
 
 }) => {
+    const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     const theme = useTheme();
     return (
         <Box
@@ -83,7 +89,10 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProp> = ({
             {(mostrarBotaoSalvarCarregando &&
                 <Skeleton width={110} height={60} />
             )}
-            {(mostrarBotaoSalvarEFechar && !mostrarBotaoSalvarEFecharCarregando &&
+            {(mostrarBotaoSalvarEFechar &&
+                !mostrarBotaoSalvarEFecharCarregando &&
+                !smDown &&
+                !mdDown &&
                 <CustomBtn
                     icone='save'
                     label='Salvar e voltar'
@@ -91,7 +100,7 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProp> = ({
                     onClick={aoClicarEmSalvarEFechar}
                 />
             )}
-            {(mostrarBotaoSalvarEFecharCarregando &&
+            {(mostrarBotaoSalvarEFecharCarregando && !smDown && !mdDown &&
                 <Skeleton width={180} height={60} />
             )}
             {(mostrarBotaoApagar && !mostrarBotaoApagarCarregando &&
@@ -105,7 +114,10 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProp> = ({
             {(mostrarBotaoApagarCarregando &&
                 <Skeleton width={110} height={60} />
             )}
-            {(mostrarBotaoNovo && !mostrarBotaoNovoCarregando &&
+            {(mostrarBotaoNovo &&
+                !mostrarBotaoNovoCarregando &&
+                !smDown &&
+                !mdDown &&
                 <CustomBtn
                     icone='add'
                     label={textoBotaoNovo}
@@ -113,10 +125,14 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProp> = ({
                     onClick={aoClicarEmNovo}
                 />
             )}
-            {(mostrarBotaoNovoCarregando &&
+            {(mostrarBotaoNovoCarregando && !smDown && !mdDown &&
                 <Skeleton width={110} height={60} />
             )}
-            <Divider variant='middle' orientation='vertical' />
+            {(mostrarBotaoVoltar &&
+                (mostrarBotaoNovo || mostrarBotaoApagar || mostrarBotaoSalvar || mostrarBotaoSalvarEFechar) && (
+                    <Divider variant='middle' orientation='vertical' />
+                )
+            )}
             {(mostrarBotaoVoltar && !mostrarBotaoVoltarCarregando &&
                 <CustomBtn
                     icone='arrow_back'
