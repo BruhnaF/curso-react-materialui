@@ -6,6 +6,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "mock": "yarn run json-server -w -p 3333 ./mock/database.json",
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
+    "axios": "^1.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "6",
@@ -31,6 +33,7 @@
     "@typescript-eslint/parser": "^6.14.0",
     "eslint": "^8.55.0",
     "eslint-plugin-react": "^7.33.2",
+    "json-server": "^1.0.0-alpha.21",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
