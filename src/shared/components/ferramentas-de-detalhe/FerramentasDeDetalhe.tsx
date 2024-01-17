@@ -95,7 +95,7 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProp> = ({
                 !mdDown &&
                 <CustomBtn
                     icone='save'
-                    label='Salvar e voltar'
+                    label='Salvar e Fechar'
                     variante='outlined'
                     onClick={aoClicarEmSalvarEFechar}
                 />

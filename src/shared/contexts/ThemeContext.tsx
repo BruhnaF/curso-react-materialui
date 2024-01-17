@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useCallback, useState, useMemo, useContext } from 'react';
 import { ThemeProvider } from '@emotion/react';
-import { Box } from '@mui/system';
+import { Box } from '@mui/material';
 import { DarkTheme, LightTheme } from './../themes';
 
 interface IThemeContextData {
