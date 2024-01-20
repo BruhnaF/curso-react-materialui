@@ -1,35 +1,16 @@
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FerramentasDaListagem } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 import { useEffect, useMemo, useState } from 'react';
-import { IListagemPessoa, PessoaService } from '../../shared/services/api/pessoas/PessoasService';
+import { IListagemPessoa, PessoaService } from '../../shared/services/api/pessoas/PessoaService';
 import { useDebounce } from '../../shared/hooks';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, styled, tableCellClasses } from '@mui/material';
-
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
+import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
+import { Environment } from '../../shared/environment';
 
 export const ListagemDePessoas: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { debounce } = useDebounce();
+    const navigate = useNavigate();
 
     const [rows, setRows] = useState<IListagemPessoa[]>([]);
     const [isLoading,
@@ -41,13 +22,14 @@ export const ListagemDePessoas: React.FC = () => {
         return searchParams.get('busca') ?? '';
     }, [searchParams]);
 
+    const pagina = useMemo(() => {
+        return Number(searchParams.get('pagina') ?? '1');
+    }, [searchParams]);
+
     useEffect(() => {
-        if (isLoading || totalCount) {
-            true;
-        }
         setIsLoading(true);
         debounce(() => {
-            PessoaService.getAll(1, busca).then(result => {
+            PessoaService.getAll(pagina, busca).then(result => {
                 setIsLoading(false);
                 if (result instanceof Error) {
                     alert(result.message);
@@ -58,7 +40,23 @@ export const ListagemDePessoas: React.FC = () => {
                 }
             });
         });
-    }, [busca]);
+    }, [busca, pagina]);
+
+    const handleDelete = (id: number) => {
+        if (confirm('Realmente deseja apagar o registro?')) {
+            PessoaService.deleteById(id).then(result => {
+                if (result instanceof Error) {
+                    alert(result.message);
+                } else {
+                    setRows(oldRows => {
+                        return [
+                            ...oldRows.filter(oldRow => oldRow.id !== id)
+                        ];
+                    });
+                }
+            });
+        }
+    };
 
     return (
         <LayoutBaseDePagina
@@ -68,28 +66,61 @@ export const ListagemDePessoas: React.FC = () => {
                     mostrarImputBusca
                     textoBotaoNovo='Nova'
                     textoDaBusca={busca}
-                    aoMudarTextoDeBusca={texto => setSearchParams({ busca: texto }, { replace: true })}
+                    aoMudarTextoDeBusca={texto => setSearchParams({ busca: texto, pagina: '1' }, { replace: true })}
                 />
             }
         >
             <TableContainer component={Paper} variant='outlined' sx={{ n: 1, width: 'auto' }}>
-                <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <Table>
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell>Ações</StyledTableCell>
-                            <StyledTableCell>Nome</StyledTableCell>
-                            <StyledTableCell>Email</StyledTableCell>
+                            <TableCell>Ações</TableCell>
+                            <TableCell>Nome</TableCell>
+                            <TableCell>Email</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rows.map(row => (
-                            <StyledTableRow key={row.id}>
-                                <StyledTableCell>Ações</StyledTableCell>
-                                <StyledTableCell>{row.nome}</StyledTableCell>
-                                <StyledTableCell>{row.email}</StyledTableCell>
-                            </StyledTableRow>
+                            <TableRow key={row.id}>
+                                <TableCell>
+                                    <IconButton size='small' onClick={() => handleDelete(row.id)}>
+                                        <Icon>delete</Icon>
+                                    </IconButton>
+                                    <IconButton size='small' onClick={() => navigate(`/pessoas/detalhe/${ row.id }`)}>
+                                        <Icon>edit</Icon>
+                                    </IconButton>
+                                </TableCell>
+                                <TableCell>{row.nome}</TableCell>
+                                <TableCell>{row.email}</TableCell>
+                            </TableRow>
                         ))}
                     </TableBody>
+
+                    {totalCount == 0 && !isLoading && (
+                        <caption>
+                            {Environment.LISTAGEM_VAZIA}
+                        </caption>
+                    )}
+                    <TableFooter>
+                        {isLoading && (
+                            <TableRow>
+                                <TableCell colSpan={3}>
+                                    <LinearProgress variant='indeterminate' />
+                                </TableCell>
+                            </TableRow>
+                        )}
+                        {totalCount > 0 && totalCount > Environment.LIMITE_DE_LINHAS && (
+                            <TableRow>
+                                <TableCell colSpan={3}>
+                                    <Pagination
+                                        page={pagina}
+                                        count={Math.ceil(totalCount / Environment.LIMITE_DE_LINHAS)}
+                                        onChange={(e, newPage) => setSearchParams({ busca, pagina: newPage.toString() }, { replace: true })}
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableFooter>
                 </Table>
             </TableContainer>
         </LayoutBaseDePagina >
