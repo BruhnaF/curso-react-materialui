@@ -8,13 +8,6 @@
       "sobrenome": "Silva"
     },
     {
-      "id": "3",
-      "cidadeId": 1,
-      "email": "pedrovitor@gmail.com",
-      "nome": "Pedro",
-      "sobrenome": "Vitor"
-    },
-    {
       "id": "4",
       "cidadeId": 2,
       "email": "camilasantos@gmail.com",
