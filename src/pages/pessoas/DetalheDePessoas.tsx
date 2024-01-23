@@ -1,16 +1,24 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 import { FerramentasDeDetalhe } from '../../shared/components';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PessoaService } from '../../shared/services/api/pessoas/PessoaService';
 import { Form } from '@unform/web';
 import { VTextField } from '../../shared/forms';
+import { FormHandles } from '@unform/core';
 
+interface IFormData {
+    email: string;
+    cidadeId: number;
+    nome: string;
+    sobrenome: string;
+}
 
 export const DetalheDePessoas: React.FC = () => {
 
     const { id = 'nova' } = useParams<'id'>();
     const navigate = useNavigate();
+    const formRef = useRef<FormHandles>(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [nome, setNome] = useState('');
@@ -25,15 +33,34 @@ export const DetalheDePessoas: React.FC = () => {
                     navigate('/pessoas');
                 } else {
                     setNome(result.nome);
-                    console.log(result);
+                    formRef.current?.setData(result);
                 }
             });
         }
 
     }, [id]);
 
-    const handleSave = () => {
-        console.log('');
+    const handleSave = (dados: IFormData) => {
+        setIsLoading(true);
+        if (id === 'nova') {
+            PessoaService.create(dados).then(result => {
+                setIsLoading(false);
+                if (result instanceof Error) {
+                    alert(result.message);
+                } else {
+                    navigate(`/pessoas/detalhe/${result}`);
+                }
+            });
+        } else {
+            PessoaService.updateById(Number(id), { id: Number(id), ...dados }).then(result => {
+                setIsLoading(false);
+                if (result instanceof Error) {
+                    alert(result.message);
+                } else {
+                    navigate('/pessoas');
+                }
+            });
+        }
     };
 
     const handleDelete = (id: number) => {
@@ -58,8 +85,8 @@ export const DetalheDePessoas: React.FC = () => {
                     mostrarBotaoSalvarEFechar
                     mostrarBotaoApagar={id !== 'nova'}
                     mostrarBotaoNovo={id !== 'nova'}
-                    aoClicarEmSalvar={handleSave}
-                    aoClicarEmSalvarEFechar={handleSave}
+                    aoClicarEmSalvar={() => formRef.current?.submitForm()}
+                    aoClicarEmSalvarEFechar={() => formRef.current?.submitForm()}
                     aoClicarEmApagar={() => handleDelete(Number(id))}
                     aoClicarEmNovo={() => navigate('/pessoas/detalhe/nova')}
                     aoClicarEmVoltar={() => navigate('/pessoas')}
@@ -70,10 +97,11 @@ export const DetalheDePessoas: React.FC = () => {
                 <></>
             )}
 
-            <Form onSubmit={(dados) => console.log(dados)} placeholder={id}>
-                <VTextField
-                    name='Nome'
-                />
+            <Form ref={formRef} onSubmit={handleSave} placeholder=''>
+                <VTextField placeholder='Nome' name='nome' />
+                <VTextField placeholder='Email' name='email' />
+                <VTextField placeholder='Cidade id' name='cidadeId' />
+                <button type='submit'>Salvar</button>
             </Form>
         </LayoutBaseDePagina>
     );

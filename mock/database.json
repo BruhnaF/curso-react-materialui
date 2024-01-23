@@ -22,13 +22,6 @@
       "sobrenome": "Pedroso"
     },
     {
-      "id": "7",
-      "cidadeId": 2,
-      "email": "fernandalima@gmail.com",
-      "nome": "Fernanda",
-      "sobrenome": "Lima"
-    },
-    {
       "id": "8",
       "cidadeId": 2,
       "email": "gabrielamarques@gmail.com",
