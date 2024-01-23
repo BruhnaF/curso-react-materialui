@@ -2,24 +2,21 @@
   "pessoas": [
     {
       "id": "1",
-      "cidadeId": 1,
+      "nome": "Joaozinho",
       "email": "joaosilva123@gmail.com",
-      "nome": "Joao",
-      "sobrenome": "Silva"
+      "cidadeId": 1
     },
     {
       "id": "4",
-      "cidadeId": 2,
+      "nome": "Camilas",
       "email": "camilasantos@gmail.com",
-      "nome": "Camila",
-      "sobrenome": "Santos"
+      "cidadeId": 2
     },
     {
       "id": "5",
-      "cidadeId": 2,
-      "email": "carlospedroso@gmail.com",
       "nome": "Carlos",
-      "sobrenome": "Pedroso"
+      "email": "carlospedroso@gmail.com",
+      "cidadeId": 2
     },
     {
       "id": "8",
@@ -30,10 +27,9 @@
     },
     {
       "id": "9",
-      "cidadeId": 2,
+      "nome": "Helen",
       "email": "helenafrutuoso@gmail.com",
-      "nome": "Helena",
-      "sobrenome": "Frutuoso"
+      "cidadeId": 2
     },
     {
       "id": "10",
