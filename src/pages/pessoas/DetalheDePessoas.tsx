@@ -1,11 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 import { FerramentasDeDetalhe } from '../../shared/components';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PessoaService } from '../../shared/services/api/pessoas/PessoaService';
-import { Form } from '@unform/web';
-import { VTextField } from '../../shared/forms';
-import { FormHandles } from '@unform/core';
+import { VTextField, VForm, useVForm } from '../../shared/forms';
 import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
 
 interface IFormData {
@@ -19,7 +17,7 @@ export const DetalheDePessoas: React.FC = () => {
 
     const { id = 'nova' } = useParams<'id'>();
     const navigate = useNavigate();
-    const formRef = useRef<FormHandles>(null);
+    const { formRef, save, saveAndClose, isSaveAndClose } = useVForm();
 
     const [isLoading, setIsLoading] = useState(false);
     const [nome, setNome] = useState('');
@@ -37,8 +35,13 @@ export const DetalheDePessoas: React.FC = () => {
                     formRef.current?.setData(result);
                 }
             });
+        } else {
+            formRef.current?.setData({
+                email: '',
+                cidadeId: '',
+                nome: ''
+            });
         }
-
     }, [id]);
 
     const handleSave = (dados: IFormData) => {
@@ -48,6 +51,8 @@ export const DetalheDePessoas: React.FC = () => {
                 setIsLoading(false);
                 if (result instanceof Error) {
                     alert(result.message);
+                } else if (isSaveAndClose()) {
+                    navigate('/pessoas');
                 } else {
                     navigate(`/pessoas/detalhe/${result}`);
                 }
@@ -57,7 +62,7 @@ export const DetalheDePessoas: React.FC = () => {
                 setIsLoading(false);
                 if (result instanceof Error) {
                     alert(result.message);
-                } else {
+                } else if (isSaveAndClose()) {
                     navigate('/pessoas');
                 }
             });
@@ -86,15 +91,15 @@ export const DetalheDePessoas: React.FC = () => {
                     mostrarBotaoSalvarEFechar
                     mostrarBotaoApagar={id !== 'nova'}
                     mostrarBotaoNovo={id !== 'nova'}
-                    aoClicarEmSalvar={() => formRef.current?.submitForm()}
-                    aoClicarEmSalvarEFechar={() => formRef.current?.submitForm()}
+                    aoClicarEmSalvar={save}
+                    aoClicarEmSalvarEFechar={saveAndClose}
                     aoClicarEmApagar={() => handleDelete(Number(id))}
                     aoClicarEmNovo={() => navigate('/pessoas/detalhe/nova')}
                     aoClicarEmVoltar={() => navigate('/pessoas')}
                 />
             }
         >
-            <Form ref={formRef} onSubmit={handleSave} placeholder=''>
+            <VForm ref={formRef} onSubmit={handleSave} placeholder=''>
                 <Box margin={1} display='flex' flexDirection='column' component={Paper} variant='outlined' >
                     <Grid container item direction='column' padding={2} spacing={2}>
                         {isLoading && (
@@ -130,7 +135,7 @@ export const DetalheDePessoas: React.FC = () => {
                     </Grid>
                 </Box>
                 <button type='submit'>Salvar</button>
-            </Form>
+            </VForm>
         </LayoutBaseDePagina >
     );
 };
