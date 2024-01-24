@@ -3,8 +3,9 @@ import { LayoutBaseDePagina } from '../../shared/layouts';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { useEffect, useState } from 'react';
 import { PessoaService } from '../../shared/services/api/pessoas/PessoaService';
-import { VTextField, VForm, useVForm } from '../../shared/forms';
+import { VTextField, VForm, useVForm, IVFormErrors } from '../../shared/forms';
 import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
+import * as yup from 'yup';
 
 interface IFormData {
     email: string;
@@ -12,6 +13,14 @@ interface IFormData {
     nome: string;
     sobrenome: string;
 }
+
+const formValidationSchema: yup.Schema<IFormData> = yup.object().shape({
+    nome: yup.string().required().min(3),
+    email: yup.string().required().email(),
+    cidadeId: yup.number().required(),
+    sobrenome: yup.string().required().min(3),
+});
+
 
 export const DetalheDePessoas: React.FC = () => {
 
@@ -45,28 +54,38 @@ export const DetalheDePessoas: React.FC = () => {
     }, [id]);
 
     const handleSave = (dados: IFormData) => {
-        setIsLoading(true);
-        if (id === 'nova') {
-            PessoaService.create(dados).then(result => {
-                setIsLoading(false);
-                if (result instanceof Error) {
-                    alert(result.message);
-                } else if (isSaveAndClose()) {
-                    navigate('/pessoas');
-                } else {
-                    navigate(`/pessoas/detalhe/${result}`);
-                }
+        formValidationSchema.validate(dados, { abortEarly: false }).then(dadosValidados => {
+            setIsLoading(true);
+            if (id === 'nova') {
+                PessoaService.create(dadosValidados).then(result => {
+                    setIsLoading(false);
+                    if (result instanceof Error) {
+                        alert(result.message);
+                    } else if (isSaveAndClose()) {
+                        navigate('/pessoas');
+                    } else {
+                        navigate(`/pessoas/detalhe/${result}`);
+                    }
+                });
+            } else {
+                PessoaService.updateById(Number(id), { id: Number(id), ...dadosValidados }).then(result => {
+                    setIsLoading(false);
+                    if (result instanceof Error) {
+                        alert(result.message);
+                    } else if (isSaveAndClose()) {
+                        navigate('/pessoas');
+                    }
+                });
+            }
+        }).catch((errors: yup.ValidationError) => {
+            const validationErrors: IVFormErrors = {};
+            errors.inner.forEach(error => {
+                if (!error.path) return;
+                validationErrors[error.path] = error.message;
             });
-        } else {
-            PessoaService.updateById(Number(id), { id: Number(id), ...dados }).then(result => {
-                setIsLoading(false);
-                if (result instanceof Error) {
-                    alert(result.message);
-                } else if (isSaveAndClose()) {
-                    navigate('/pessoas');
-                }
-            });
-        }
+            formRef.current?.setErrors(validationErrors);
+        });
+
     };
 
     const handleDelete = (id: number) => {
@@ -117,6 +136,17 @@ export const DetalheDePessoas: React.FC = () => {
                                     fullWidth
                                     label='Nome'
                                     name='nome'
+                                    disabled={isLoading}
+                                    onChange={e => setNome(e.target.value)}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid container direction='row' spacing={2}>
+                            <Grid item xs={12} md={6} lg={4} xl={2}>
+                                <VTextField
+                                    fullWidth
+                                    label='Sobrenome'
+                                    name='sobrenome'
                                     disabled={isLoading}
                                     onChange={e => setNome(e.target.value)}
                                 />
