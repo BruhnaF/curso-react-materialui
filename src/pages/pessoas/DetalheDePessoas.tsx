@@ -122,7 +122,7 @@ export const DetalheDePessoas: React.FC = () => {
         >
             <VForm ref={formRef} onSubmit={handleSave} placeholder=''>
                 <Box margin={1} display='flex' flexDirection='column' component={Paper} variant='outlined' >
-                    <Grid container item direction='column' padding={2} spacing={2}>
+                    <Grid container direction='column' padding={2} spacing={2}>
                         {isLoading && (
                             <Grid item>
                                 <LinearProgress variant='indeterminate' />
@@ -132,7 +132,7 @@ export const DetalheDePessoas: React.FC = () => {
                             <Typography variant='h6'>Geral</Typography>
                         </Grid>
 
-                        <Grid container direction='row' spacing={2}>
+                        <Grid item container direction='row' spacing={2}>
                             <Grid item xs={12} md={6} lg={4} xl={2}>
                                 <VTextField
                                     fullWidth
@@ -143,7 +143,7 @@ export const DetalheDePessoas: React.FC = () => {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container direction='row' spacing={2}>
+                        <Grid item container direction='row' spacing={2}>
                             <Grid item xs={12} md={6} lg={4} xl={2}>
                                 <VTextField
                                     fullWidth
@@ -154,12 +154,12 @@ export const DetalheDePessoas: React.FC = () => {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container direction='row' spacing={2}>
+                        <Grid item container direction='row' spacing={2}>
                             <Grid item xs={12} md={6} lg={4} xl={2}>
                                 <VTextField fullWidth label='Email' name='email' disabled={isLoading} />
                             </Grid>
                         </Grid>
-                        <Grid container direction='row' spacing={2}>
+                        <Grid item container direction='row' spacing={2}>
                             <Grid item xs={12} md={6} lg={4} xl={2}>
                                 <AutoCompleteCidade isExternalLoading={isLoading}/>
                             </Grid>

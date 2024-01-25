@@ -112,7 +112,7 @@ export const DetalheDeCidades: React.FC = () => {
         >
             <VForm ref={formRef} onSubmit={handleSave} placeholder=''>
                 <Box margin={1} display='flex' flexDirection='column' component={Paper} variant='outlined' >
-                    <Grid container item direction='column' padding={2} spacing={2}>
+                    <Grid container direction='column' padding={2}>
                         {isLoading && (
                             <Grid item>
                                 <LinearProgress variant='indeterminate' />
@@ -122,7 +122,7 @@ export const DetalheDeCidades: React.FC = () => {
                             <Typography variant='h6'>Geral</Typography>
                         </Grid>
 
-                        <Grid container direction='row' spacing={2}>
+                        <Grid item container direction='row' spacing={2}>
                             <Grid item xs={12} md={6} lg={4} xl={2}>
                                 <VTextField
                                     fullWidth
