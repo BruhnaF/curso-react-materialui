@@ -2,36 +2,30 @@ import { Environment } from '../../../environment';
 import { Api } from '../../axios-config';
 
 
-export interface IListagemPessoa {
+export interface IListagemCidade {
   id: string;
-  email: string;
-  cidadeId: string;
   nome: string;
-  sobrenome: string;
 }
 
-export interface IDetalhePessoa {
+export interface IDetalheCidade {
   id: string;
-  email: string;
-  cidadeId: string;
   nome: string;
-  sobrenome: string;
 }
 
-export type TPessoasComTotalCount = {
-  data: IListagemPessoa[];
+export type TCidadeComTotalCount = {
+  data: IListagemCidade[];
   totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<TPessoasComTotalCount | Error> => {
+const getAll = async (page = 1, filter = ''): Promise<TCidadeComTotalCount | Error> => {
   try {
-    const urlRelativa = `/pessoas?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome=${filter}`;
+    const urlRelativa = `/cidades?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome=${filter}`;
     const { data } = await Api.get(urlRelativa);
-    
+
     if (data) {
       return {
         data,
-        totalCount: Number(data.length|| Environment.LIMITE_DE_LINHAS)
+        totalCount: Number(data.length || Environment.LIMITE_DE_LINHAS)
       };
     }
 
@@ -42,9 +36,9 @@ const getAll = async (page = 1, filter = ''): Promise<TPessoasComTotalCount | Er
   }
 };
 
-const getById = async (id: string): Promise<IDetalhePessoa | Error> => {
+const getById = async (id: string): Promise<IDetalheCidade | Error> => {
   try {
-    const { data } = await Api.get(`/pessoas/${id}`);
+    const { data } = await Api.get(`/cidades/${id}`);
 
     if (data) {
       return data;
@@ -57,11 +51,12 @@ const getById = async (id: string): Promise<IDetalhePessoa | Error> => {
   }
 };
 
-const create = async (dados: Omit<IDetalhePessoa, 'id'>): Promise<string | Error> => {
+const create = async (dados: Omit<IDetalheCidade, 'id'>): Promise<string | Error> => {
   try {
-    const { data } = await Api.post<IDetalhePessoa>('/pessoas', dados);
+    const { data } = await Api.post<IDetalheCidade>('/cidades', dados);
 
     if (data) {
+      console.log(data);
       return data.id;
     }
 
@@ -72,9 +67,9 @@ const create = async (dados: Omit<IDetalhePessoa, 'id'>): Promise<string | Error
   }
 };
 
-const updateById = async (id: string, dados: IDetalhePessoa): Promise<void | Error> => {
+const updateById = async (id: string, dados: IDetalheCidade): Promise<void | Error> => {
   try {
-    await Api.put(`/pessoas/${id}`, dados);
+    await Api.put(`/cidades/${id}`, dados);
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');
@@ -83,7 +78,7 @@ const updateById = async (id: string, dados: IDetalhePessoa): Promise<void | Err
 
 const deleteById = async (id: string): Promise<void | Error> => {
   try {
-    await Api.delete(`/pessoas/${id}`);
+    await Api.delete(`/cidades/${id}`);
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao apagar o registro.');
@@ -91,7 +86,7 @@ const deleteById = async (id: string): Promise<void | Error> => {
 };
 
 
-export const PessoaService = {
+export const CidadeService = {
   getAll,
   create,
   getById,
