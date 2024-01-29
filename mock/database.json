@@ -60,5 +60,8 @@
       "email": "deboradias@gmail.com",
       "cidadeId": "5f12"
     }
-  ]
+  ],
+  "auth": {
+    "accessToken": "aaaaaaaaaaaaaa.bbbbbbbbbbbbbb.ccccccccccc"
+  }
 }
