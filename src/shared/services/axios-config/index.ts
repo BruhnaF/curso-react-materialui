@@ -11,4 +11,4 @@ Api.interceptors.response.use(
     (error) => errorInterceptor(error)
 );
 
-export {Api};
+export { Api };

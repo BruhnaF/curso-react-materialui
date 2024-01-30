@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AuthService } from '../services/api/auth/AuthService';
 
 interface IAuthProviderProps {
@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
             return result.message;
         } else {
             localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_TOKEN, JSON.stringify(result.accessToken));
-            setAccessToken(result.accessToken);
+            return setAccessToken(result.accessToken);
         }
     }, []);
 
@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
         setAccessToken(undefined);
     }, []);
 
-    const isAuthenticated = useMemo(() => !!accessToken, []);
+    const isAuthenticated = !!accessToken;
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, login: handleLogin, logout: handleLogout }}>
@@ -50,3 +50,5 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+export const useAuthContext = () => useContext(AuthContext);
